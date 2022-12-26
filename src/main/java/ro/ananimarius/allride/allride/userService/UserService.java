@@ -64,7 +64,7 @@ public class UserService {
             return null;
         }
         if(us.size()>1){
-            throw new RuntimeException("Illegal state"+us.size()+" users with the same phone are listed!");
+            throw new RuntimeException("Illegal state "+us.size()+" users with the same phone are listed!");
         }
         User u=us.get(0);
         if(!encoder.matches(password,u.getPassword())){
@@ -76,6 +76,10 @@ public class UserService {
     }
     public boolean existsByPhone(String phone){
         List<User>us=users.findByPhone(phone);
+        return !us.isEmpty();
+    }
+    public boolean existsByGoogleId(String googleId){
+        List<User>us=users.findByGoogleId(googleId);
         return !us.isEmpty();
     }
 

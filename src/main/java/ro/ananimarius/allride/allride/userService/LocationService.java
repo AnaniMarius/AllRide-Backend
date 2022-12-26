@@ -19,7 +19,7 @@ public class LocationService {
         List<User> us = users.findByAuthToken(token);
         User u = us.get(0);
         u.setLatitude(lat);
-        u.setLongitude(lat);
+        u.setLongitude(lon);
         u.setDirection(dir);
         users.save(u);
     }
@@ -45,10 +45,10 @@ public class LocationService {
     }
 
     private List<UserDAO> toDaoList(List<User> us) {
-        ArrayList<UserDAO> respone = new ArrayList<>();
+        ArrayList<UserDAO> response = new ArrayList<>();
         for(User u : us) {
-            respone.add(u.getDao()); //GET PARTIALDAO HERE, BUT I SHOUDL DO IT
+            response.add(u.getDao()); //GET PARTIALDAO HERE, BUT I SHOUDL DO IT
         }
-        return respone;
+        return response;
     }
 }
