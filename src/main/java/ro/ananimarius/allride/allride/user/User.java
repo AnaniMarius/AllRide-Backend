@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
+@Table
 public class User {
     //the user is used for both drivers and customers, even tho is not so much "polymerphic", but it's simpler
 
@@ -24,7 +25,14 @@ public class User {
     //<editor-fold desc="Attributes">
     //unique identifier
     @Id
+    //
+//    @SequenceGenerator(
+//            name="user_sequence",
+//            sequenceName="user_sequence",
+//            allocationSize = 1
+//    )
     @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE,generator ="user_sequence")
     private long id;
     String firstName;
     String lastName;
