@@ -25,14 +25,13 @@ public class User {
     //<editor-fold desc="Attributes">
     //unique identifier
     @Id
-    //
 //    @SequenceGenerator(
 //            name="user_sequence",
 //            sequenceName="user_sequence",
 //            allocationSize = 1
 //    )
-    @GeneratedValue(strategy = GenerationType.AUTO)
     //@GeneratedValue(strategy = GenerationType.SEQUENCE,generator ="user_sequence")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     String firstName;
     String lastName;
