@@ -1,5 +1,8 @@
 package ro.ananimarius.allride.allride.CRUDinterfaces;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -7,6 +10,9 @@ import ro.ananimarius.allride.allride.user.User;
 
 import java.util.List;
 @Repository
+@EnableAutoConfiguration
+@Configuration
+@ComponentScan
 public interface UserRepository extends CrudRepository<User,Long> {
     public List<User> findByAuthToken(String authToken);
     public List<User> findByPhone(String phone);

@@ -1,16 +1,14 @@
 package ro.ananimarius.allride.allride.userService;
 
+import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ro.ananimarius.allride.allride.CRUDinterfaces.UserRepository;
 import ro.ananimarius.allride.allride.UserDAO.UserDAO;
 import ro.ananimarius.allride.allride.user.User;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 public class UserService {
     @Autowired
