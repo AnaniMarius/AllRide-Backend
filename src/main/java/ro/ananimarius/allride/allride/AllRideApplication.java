@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.Entity;
 
-@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+@EntityScan
+@SpringBootApplication
+//@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class AllRideApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AllRideApplication.class, args);

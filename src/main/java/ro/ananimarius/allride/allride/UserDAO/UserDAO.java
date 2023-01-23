@@ -1,7 +1,9 @@
 package ro.ananimarius.allride.allride.UserDAO;
 
-import java.io.Serializable;
+import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
+@Repository
 public class UserDAO implements Serializable {
     private Long id;
     private String givenName;

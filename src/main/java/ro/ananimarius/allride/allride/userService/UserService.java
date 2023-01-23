@@ -33,7 +33,7 @@ public class UserService {
         u.setLastName(user.getSurname());
         u.setGoogleId(user.getGoogleId());
         u.setLatitude(user.getLatitude());
-        u.setLongitute(user.getLongitude());
+        u.setLongitude(user.getLongitude());
         u.setPhone(user.getPhone());
         users.save(u);
     }

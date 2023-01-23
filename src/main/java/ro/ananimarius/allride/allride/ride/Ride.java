@@ -7,6 +7,8 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
+@Entity
+@Table
 public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

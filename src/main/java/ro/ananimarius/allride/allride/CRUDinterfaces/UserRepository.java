@@ -10,9 +10,9 @@ import ro.ananimarius.allride.allride.user.User;
 
 import java.util.List;
 @Repository
-@EnableAutoConfiguration
-@Configuration
-@ComponentScan
+//@EnableAutoConfiguration
+//@Configuration
+//@ComponentScan
 public interface UserRepository extends CrudRepository<User,Long> {
     public List<User> findByAuthToken(String authToken);
     public List<User> findByPhone(String phone);

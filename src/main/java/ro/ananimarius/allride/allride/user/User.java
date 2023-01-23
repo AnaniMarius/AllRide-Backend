@@ -50,7 +50,7 @@ public class User {
     float currentRating;
     //the direction the user is headed to
     double latitude;
-    double longitute;
+    double longitude;
     float direction;
 
 
@@ -125,8 +125,8 @@ public class User {
         return latitude;
     }
 
-    public double getLongitute() {
-        return longitute;
+    public double getLongitude() {
+        return longitude;
     }
 
     public float getDirection() {
@@ -203,8 +203,8 @@ public class User {
         this.latitude = latitude;
     }
 
-    public void setLongitute(double longitute) {
-        this.longitute = longitute;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public void setDirection(float direction) {
@@ -212,7 +212,7 @@ public class User {
     }
     //</editor-fold>
 
-    public User(String authToken, long id, String firstName, String lastName, byte[] avatar, String phone, String email, String password, String facebookId, String googleId, boolean driver, String car, Point location, boolean hailing, Long assignedUser, float currentRating, double latitude, double longitute, float direction) {
+    public User(String authToken, long id, String firstName, String lastName, byte[] avatar, String phone, String email, String password, String facebookId, String googleId, boolean driver, String car, Point location, boolean hailing, Long assignedUser, float currentRating, double latitude, double longitude, float direction) {
         this.authToken = authToken;
         this.id = id;
         this.firstName = firstName;
@@ -230,7 +230,7 @@ public class User {
         this.assignedUser = assignedUser;
         this.currentRating = currentRating;
         this.latitude = latitude;
-        this.longitute = longitute;
+        this.longitude = longitude;
         this.direction = direction;
     }
 
@@ -252,15 +252,12 @@ public class User {
         this.assignedUser = null;
         this.currentRating = user.getCurrentRating();
         this.latitude = user.getLatitude();
-        this.longitute = user.getLongitude();
+        this.longitude = user.getLongitude();
         this.direction = user.getDirection();
     }
     public UserDAO getDao() {
-        UserDAO dao=new UserDAO(id,firstName,lastName,phone,email,facebookId,googleId,driver,car,currentRating,latitude,longitute,direction,authToken,password);
+        UserDAO dao=new UserDAO(id,firstName,lastName,phone,email,facebookId,googleId,driver,car,currentRating,latitude,longitude,direction,authToken,password);
         return dao;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitute = longitude;
-    }
 }

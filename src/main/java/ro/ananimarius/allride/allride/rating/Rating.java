@@ -2,11 +2,10 @@ package ro.ananimarius.allride.allride.rating;
 
 import ro.ananimarius.allride.allride.user.User;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
+@Entity
+@Table
 public class Rating {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -21,6 +20,10 @@ public class Rating {
 
     @ManyToOne
     private User driver;
+
+    public Rating() {
+
+    }
 
     //<editor-fold desc="Getters & setters">
     public Long getId() {
