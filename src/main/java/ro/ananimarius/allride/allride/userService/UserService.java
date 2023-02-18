@@ -95,6 +95,14 @@ public class UserService {
         List<User>us=users.findByGoogleId(googleId);
         return !us.isEmpty();
     }
+    public String getAuthToken(String googleId){
+        List<User> us = users.findByGoogleId(googleId);
+        if (!us.isEmpty()) {
+            return us.get(0).getAuthToken();
+        } else {
+            return null;
+        }
+    }
 
 
 }

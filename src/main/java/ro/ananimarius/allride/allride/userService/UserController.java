@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ananimarius.allride.allride.UserDAO.UserDAO;
+import ro.ananimarius.allride.allride.user.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,10 +41,15 @@ public class UserController {
         boolean exists = users.existsByGoogleId(idToken);
         if (exists) {
             //response for user existing already
-            return ResponseEntity.ok().body("User exists");
+            String authToken = users.getAuthToken(idToken);
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("authToken", authToken);
+            return ResponseEntity.ok().body(responseJson.toString());
         } else {
             //hser doesn't exist, create a new user object using the UserDAO class
+            User x=new User();
             UserDAO user = new UserDAO();
+            user.setAuthToken(x.getAuthToken());
             user.setGivenName("");
             user.setSurname("");
             user.setEmail(email);
@@ -55,9 +61,10 @@ public class UserController {
             //
             //add the new user to the database using the UserService class
             String authToken = users.addUser(user);
-
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("authToken", authToken);
             //success response
-            return ResponseEntity.ok().body(authToken);
+            return ResponseEntity.ok().body(responseJson.toString());
         }
     }
     @RequestMapping(method=RequestMethod.GET,value = "/login")
