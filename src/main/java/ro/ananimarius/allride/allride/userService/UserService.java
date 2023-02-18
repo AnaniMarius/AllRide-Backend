@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ro.ananimarius.allride.allride.CRUDinterfaces.UserRepository;
 import ro.ananimarius.allride.allride.UserDAO.UserDAO;
 import ro.ananimarius.allride.allride.user.User;
+import ro.ananimarius.allride.allride.CRUDinterfaces.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,18 @@ public class UserService {
         users.save(u);
         return u.getAuthToken();
     }
+    @Autowired
+    private UserRepository userRepository;
+    //to log out
+    public void clearAuthToken(String authToken) {
+        List<User> users = userRepository.findByAuthToken(authToken);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+            user.setAuthToken(null);
+            userRepository.save(user);
+        }
+    }
+
 
     public void updateUser(UserDAO user){
         User u=users.findByAuthToken(user.getAuthToken()).get(0);
@@ -57,7 +70,7 @@ public class UserService {
         return loginImpl(users.findByFacebookId(facebookId),password);
     }
     public UserDAO loginByGoogle(String googleId, String password) throws UserAuthenticationException{
-        return loginImpl(users.findByFacebookId(googleId),password);
+        return loginImpl(users.findByGoogleId(googleId),password);
     }
     private UserDAO loginImpl(List<User> us,String password) throws UserAuthenticationException {
         if(us==null||us.isEmpty()){

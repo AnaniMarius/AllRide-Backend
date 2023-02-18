@@ -14,6 +14,7 @@ import java.util.List;
 //@Configuration
 //@ComponentScan
 public interface UserRepository extends CrudRepository<User,Long> {
+    @Query("SELECT u FROM User u WHERE u.authToken = ?1")
     public List<User> findByAuthToken(String authToken);
     public List<User> findByPhone(String phone);
     public List<User> findByGoogleId(String googleId);

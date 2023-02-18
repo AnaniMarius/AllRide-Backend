@@ -25,12 +25,6 @@ public class User {
     //<editor-fold desc="Attributes">
     //unique identifier
     @Id
-//    @SequenceGenerator(
-//            name="user_sequence",
-//            sequenceName="user_sequence",
-//            allocationSize = 1
-//    )
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE,generator ="user_sequence")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     String firstName;
@@ -41,6 +35,7 @@ public class User {
     String email;
     String password;//the password will be stored as a salted hash of the password
     String facebookId;
+    @Column(name = "google_id", length = 2000)
     String googleId;
     boolean driver;
     String car;
