@@ -19,6 +19,8 @@ public interface UserRepository extends CrudRepository<User,Long> {
     public List<User> findByPhone(String phone);
     public List<User> findByGoogleId(String googleId);
     public List<User> findByFacebookId(String facebookId);
+    @Query("SELECT u FROM User u WHERE u.email = ?1")
+    public List<User> findByEmail(String email);
     @Query("select b from User b where b.driver = true and b.latitude " + "between ?1 and ?2 and b.longitude between ?3 and ?4")
     public List<User> findByDriver(double minLat, double maxLat, double minLon, double maxLon);
 

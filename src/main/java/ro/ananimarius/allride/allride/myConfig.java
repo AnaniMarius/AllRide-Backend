@@ -49,6 +49,11 @@ public class myConfig {
             }
 
             @Override
+            public List<User> findByEmail(String email) {
+                return null;
+            }
+
+            @Override
             public List<User> findByDriver(double minLat, double maxLat, double minLon, double maxLon) {
                 return null;
             }

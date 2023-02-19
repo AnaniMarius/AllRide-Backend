@@ -35,7 +35,19 @@ public class UserService {
             userRepository.save(user);
         }
     }
-
+    public String reCreateAuthToken(String email) {
+        List<User> users = userRepository.findByEmail(email);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+            User x=new User();
+            user.setAuthToken(x.getAuthToken());
+            userRepository.save(user);
+            return users.get(0).getAuthToken();
+        }
+        else {
+            return null;
+        }
+    }
 
     public void updateUser(UserDAO user){
         User u=users.findByAuthToken(user.getAuthToken()).get(0);

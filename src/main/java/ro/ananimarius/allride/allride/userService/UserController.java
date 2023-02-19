@@ -1,5 +1,6 @@
 package ro.ananimarius.allride.allride.userService;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,11 +41,21 @@ public class UserController {
                                                 @RequestParam("email") String email) {
         boolean exists = users.existsByGoogleId(idToken);
         if (exists) {
-            //response for user existing already
-            String authToken = users.getAuthToken(idToken);
-            JSONObject responseJson = new JSONObject();
-            responseJson.put("authToken", authToken);
-            return ResponseEntity.ok().body(responseJson.toString());
+            //CHECK IF ALREADY IS AUTHTOKEN. IF YES, REJECT THE REQUEST.
+
+            if(users.getAuthToken(idToken)==null){ //verific daca authtoken nu exista (nu ar trebui), dar totusi daca exista, provizoriu sa ma logheze anyways
+                String reToken=users.reCreateAuthToken(email);
+                JSONObject responseJson = new JSONObject();
+                responseJson.put("authToken", reToken);
+                return ResponseEntity.ok().body(responseJson.toString());
+            }
+            else {
+                //create a new authToken !!!! modify, here is just giving it the existing one
+                String authToken = users.getAuthToken(idToken);
+                JSONObject responseJson = new JSONObject();
+                responseJson.put("authToken", authToken);
+                return ResponseEntity.ok().body(responseJson.toString());
+            }
         } else {
             //hser doesn't exist, create a new user object using the UserDAO class
             User x=new User();
@@ -84,22 +95,16 @@ public class UserController {
         return null;
     }
 
-@RequestMapping(value = "/signout", method = RequestMethod.GET) //TO BE WORKED ON !!!!!!!!!!
-public String signout(HttpServletRequest request) {
-    //get the auth token from the security context
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String authToken = authentication.getCredentials().toString();
-
-    //call the clearAuthToken method of the user service
-    users.clearAuthToken(authToken);
-
-    //invalidate the session
-    HttpSession session = request.getSession(false);
-    if (session != null) {
-        session.invalidate();
+    @RequestMapping(method = RequestMethod.POST, value = "/signout")
+    public String signout(@RequestBody String authToken) {
+        // Call the clearAuthToken method of the user service
+        String authTokenParsed=null;
+        String[] parts = authToken.split("=");
+        authTokenParsed = parts[1];
+        users.clearAuthToken(authTokenParsed);
+        return "Signout successful";
     }
-    return "Signout successful";
-}
+
     @RequestMapping(method = RequestMethod.POST,value = "/add")
     public @ResponseBody String addEditUser(@RequestBody UserDAO ud)
             throws IOException {
