@@ -116,5 +116,25 @@ public class UserService {
         }
     }
 
+    public void setLatLong(String googleId, Double latitude, Double longitude){
+        List<User> users = userRepository.findByGoogleId(googleId);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+            user.setLatitude(latitude);
+            user.setLongitude(longitude);
+            userRepository.save(user);
+        }
+    }
+    public boolean authUser(String googleId, String authToken) {
+        List<User> users = userRepository.findByGoogleId(googleId);
+        if (users.isEmpty()) {
+            return false;
+        } else {
+            User user = users.get(0);
+            String test=user.getAuthToken();
+            return user.getAuthToken().equals(authToken);
+        }
+    }
+
 
 }

@@ -1,20 +1,15 @@
 package ro.ananimarius.allride.allride.userService;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ananimarius.allride.allride.UserDAO.UserDAO;
 import ro.ananimarius.allride.allride.user.User;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 @RestController
 @RequestMapping("/user")
@@ -38,11 +33,16 @@ public class UserController {
     }
     @RequestMapping(method = RequestMethod.POST, value = "/loginByGoogle")
     public ResponseEntity<String> loginByGoogle(@RequestParam("idToken") String idToken,
-                                                @RequestParam("email") String email) {
+                                                @RequestParam("email") String email,
+                                                @RequestParam("familyName") String fName,
+                                                @RequestParam("givenName") String gName,
+                                                @RequestParam("latitude") double latitude,
+                                                @RequestParam("longitude") double longitude) {
         boolean exists = users.existsByGoogleId(idToken);
         if (exists) {
+            //set the lat and long upon login
+            users.setLatLong(idToken,latitude,longitude);
             //CHECK IF ALREADY IS AUTHTOKEN. IF YES, REJECT THE REQUEST.
-
             if(users.getAuthToken(idToken)==null){ //verific daca authtoken nu exista (nu ar trebui), dar totusi daca exista, provizoriu sa ma logheze anyways
                 String reToken=users.reCreateAuthToken(email);
                 JSONObject responseJson = new JSONObject();
@@ -61,15 +61,17 @@ public class UserController {
             User x=new User();
             UserDAO user = new UserDAO();
             user.setAuthToken(x.getAuthToken());
-            user.setGivenName("");
-            user.setSurname("");
+            user.setGivenName(gName);
+            user.setSurname(fName);
             user.setEmail(email);
             user.setPhone("");
             user.setFacebookId("");
             user.setGoogleId(idToken);
             user.setPassword("");
+            user.setLatitude(latitude);
+            user.setLongitude(longitude);
             user.setId(12L);
-            //
+
             //add the new user to the database using the UserService class
             String authToken = users.addUser(user);
             JSONObject responseJson = new JSONObject();
@@ -78,9 +80,20 @@ public class UserController {
             return ResponseEntity.ok().body(responseJson.toString());
         }
     }
+    @RequestMapping(method = RequestMethod.POST, value="/updateLocation")
+    public @ResponseBody ResponseEntity<String> updateLocation(@RequestParam String authToken,
+                                                               @RequestParam("idToken") String idToken,
+                                                               @RequestParam("latitude") double latitude,
+                                                               @RequestParam("longitude") double longitude){
+        boolean v=users.authUser(idToken, authToken);
+        if(v) {
+            users.setLatLong(idToken, latitude, longitude);
+        }
+        return ResponseEntity.ok().body("Location Updated Successfully!");
+    }
+
     @RequestMapping(method=RequestMethod.GET,value = "/login")
-    public @ResponseBody UserDAO login(
-                                        @RequestParam(value="password", required=true) String password,
+    public @ResponseBody UserDAO login( @RequestParam(value="password", required=true) String password,
                                         String phone, String googleId, String facebookId)
             throws UserAuthenticationException {
         if(phone != null) {
