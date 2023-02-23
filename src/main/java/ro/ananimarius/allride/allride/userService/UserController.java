@@ -36,6 +36,7 @@ public class UserController {
                                                 @RequestParam("email") String email,
                                                 @RequestParam("familyName") String fName,
                                                 @RequestParam("givenName") String gName,
+                                                @RequestParam("isDriver") Boolean isDriver,
                                                 @RequestParam("latitude") double latitude,
                                                 @RequestParam("longitude") double longitude) {
         boolean exists = users.existsByGoogleId(idToken);
@@ -44,7 +45,7 @@ public class UserController {
             users.setLatLong(idToken,latitude,longitude);
             //CHECK IF ALREADY IS AUTHTOKEN. IF YES, REJECT THE REQUEST.
             if(users.getAuthToken(idToken)==null){ //verific daca authtoken nu exista (nu ar trebui), dar totusi daca exista, provizoriu sa ma logheze anyways
-                String reToken=users.reCreateAuthToken(email);
+                String reToken=users.reCreateAuthToken(email, isDriver); //PROVIZORIU set driver status
                 JSONObject responseJson = new JSONObject();
                 responseJson.put("authToken", reToken);
                 return ResponseEntity.ok().body(responseJson.toString());
@@ -67,6 +68,7 @@ public class UserController {
             user.setPhone("");
             user.setFacebookId("");
             user.setGoogleId(idToken);
+            user.setDriver(isDriver);
             user.setPassword("");
             user.setLatitude(latitude);
             user.setLongitude(longitude);
@@ -114,7 +116,7 @@ public class UserController {
         String authTokenParsed=null;
         String[] parts = authToken.split("=");
         authTokenParsed = parts[1];
-        users.clearAuthToken(authTokenParsed);
+        users.clearAuthToken(authTokenParsed); //also clears the isDriver
         return "Signout successful";
     }
 

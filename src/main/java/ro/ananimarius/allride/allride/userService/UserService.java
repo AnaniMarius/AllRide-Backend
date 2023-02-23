@@ -32,15 +32,17 @@ public class UserService {
         if (!users.isEmpty()) {
             User user = users.get(0);
             user.setAuthToken(null);
+            user.setDriver(false); //at least temporarily
             userRepository.save(user);
         }
     }
-    public String reCreateAuthToken(String email) {
+    public String reCreateAuthToken(String email, Boolean isDriver) {
         List<User> users = userRepository.findByEmail(email);
         if (!users.isEmpty()) {
             User user = users.get(0);
             User x=new User();
             user.setAuthToken(x.getAuthToken());
+            user.setDriver(isDriver);
             userRepository.save(user);
             return users.get(0).getAuthToken();
         }
