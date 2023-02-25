@@ -109,6 +109,10 @@ public class UserService {
         List<User>us=users.findByGoogleId(googleId);
         return !us.isEmpty();
     }
+    public boolean existsByEmail(String email){
+        List<User>us=users.findByEmail(email);
+        return !us.isEmpty();
+    }
     public String getAuthToken(String googleId){
         List<User> us = users.findByGoogleId(googleId);
         if (!us.isEmpty()) {
@@ -137,6 +141,4 @@ public class UserService {
             return user.getAuthToken().equals(authToken);
         }
     }
-
-
 }

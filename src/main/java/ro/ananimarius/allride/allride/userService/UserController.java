@@ -39,8 +39,9 @@ public class UserController {
                                                 @RequestParam("isDriver") Boolean isDriver,
                                                 @RequestParam("latitude") double latitude,
                                                 @RequestParam("longitude") double longitude) {
-        boolean exists = users.existsByGoogleId(idToken);
-        if (exists) {
+        boolean existsByGoogleId = users.existsByGoogleId(idToken);
+        //boolean existsByEmail = users.existsByEmail(email);
+        if (existsByGoogleId) {
             //set the lat and long upon login
             users.setLatLong(idToken,latitude,longitude);
             //CHECK IF ALREADY IS AUTHTOKEN. IF YES, REJECT THE REQUEST.
@@ -60,6 +61,7 @@ public class UserController {
         } else {
             //hser doesn't exist, create a new user object using the UserDAO class
             User x=new User();
+            x.setDriver(isDriver);
             UserDAO user = new UserDAO();
             user.setAuthToken(x.getAuthToken());
             user.setGivenName(gName);
@@ -68,7 +70,7 @@ public class UserController {
             user.setPhone("");
             user.setFacebookId("");
             user.setGoogleId(idToken);
-            user.setDriver(isDriver);
+            user.setDriver(isDriver); //bugged & fixed above
             user.setPassword("");
             user.setLatitude(latitude);
             user.setLongitude(longitude);
@@ -87,11 +89,12 @@ public class UserController {
                                                                @RequestParam("idToken") String idToken,
                                                                @RequestParam("latitude") double latitude,
                                                                @RequestParam("longitude") double longitude){
-        boolean v=users.authUser(idToken, authToken);
-        if(v) {
+        boolean userAuthorized=users.authUser(idToken, authToken);
+        if(userAuthorized) {
             users.setLatLong(idToken, latitude, longitude);
+            return ResponseEntity.ok().body("Location Updated Successfully!");
         }
-        return ResponseEntity.ok().body("Location Updated Successfully!");
+        return ResponseEntity.ok().body("Failed updating the location!");
     }
 
     @RequestMapping(method=RequestMethod.GET,value = "/login")
@@ -120,6 +123,30 @@ public class UserController {
         return "Signout successful";
     }
 
+    @RequestMapping(method = RequestMethod.POST, value="/selectDriver") //the traditional way of selecting from a list of drivers in the radius
+    public @ResponseBody ResponseEntity<String> selectDriver(@RequestParam String authToken,
+                             @RequestParam("idToken") String idToken,
+                             @RequestParam("latitude") double latitude,
+                             @RequestParam("longitude") double longitude){
+        boolean userAuthorized=users.authUser(idToken, authToken);
+        if(userAuthorized) {
+            return ResponseEntity.ok().body("Authorized!");
+        }
+        else{
+            return ResponseEntity.ok().body("Not authorized!");
+        }
+    }
+    @RequestMapping(method = RequestMethod.POST, value="/requestDriver") //with machine learning
+    public void requestDriver(@RequestParam String authToken,
+                             @RequestParam("idToken") String idToken,
+                             @RequestParam("latitude") double latitude,
+                             @RequestParam("longitude") double longitude){
+        boolean userAuthorized=users.authUser(idToken, authToken);
+        if(userAuthorized) {
+            //compete here
+        }
+    }
+
     @RequestMapping(method = RequestMethod.POST,value = "/add")
     public @ResponseBody String addEditUser(@RequestBody UserDAO ud)
             throws IOException {
@@ -132,8 +159,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/avatar/{id:.+}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getAvatar(
-                                             @PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> getAvatar(@PathVariable("id") Long id) {
         byte[] av = users.getAvatar(id);
         if(av != null) {
             return ResponseEntity.ok().
