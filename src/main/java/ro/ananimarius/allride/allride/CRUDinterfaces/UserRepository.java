@@ -27,4 +27,13 @@ public interface UserRepository extends CrudRepository<User,Long> {
     @Query("select b from User b where b.driver = true and " + "b.assignedUser is null and b.latitude between ?1 and ?2 " +
             "and b.longitude between ?3 and ?4")
     public List<User> findByAvailableDriver(double minLat, double maxLat, double minLon, double maxLon);
+
+    @Query("SELECT u FROM User u WHERE u.authToken IS NOT NULL AND u.driver = true AND " +
+            "6371 * acos(cos(radians(:latitude)) * cos(radians(u.latitude)) * " +
+            "cos(radians(u.longitude) - radians(:longitude)) + " +
+            "sin(radians(:latitude)) * sin(radians(u.latitude))) <= :radiusKm")
+    public List<User> findInRadius(double latitude, double longitude, double radiusKm);
+
+    @Query("SELECT u FROM User u WHERE u.authToken IS NOT NULL AND u.driver = true")
+    public List<User> findAvailableDrivers();
 }

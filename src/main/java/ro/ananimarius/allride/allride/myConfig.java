@@ -64,6 +64,16 @@ public class myConfig {
             }
 
             @Override
+            public List<User> findInRadius(double latitude, double longitude, double radiusKm) {
+                return null;
+            }
+
+            @Override
+            public List<User> findAvailableDrivers() {
+                return null;
+            }
+
+            @Override
             public <S extends User> S save(S entity) {
                 return null;
             }

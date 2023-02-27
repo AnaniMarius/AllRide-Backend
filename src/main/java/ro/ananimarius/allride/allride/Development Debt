@@ -1,0 +1,8 @@
+Rezolvarea erorii de return body pt location tracking si find driver;
+Rezolvarea existentei de authToken in db in onDestory/onPause;
+Duplicarea userilor cu googleid diferit??
+Sa fac la drivers buton de onDuty sau available. Driverul nu mai e available daca are deja 3 sau 4 clienti
+
+!!Sa modific la searchDrivers thresholdul de la 1 la 3 inapoi
+
+sa fac merge in front intre driverInfo si Driver

@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ro.ananimarius.allride.allride.CRUDinterfaces.UserRepository;
 import ro.ananimarius.allride.allride.UserDAO.UserDAO;
+import ro.ananimarius.allride.allride.user.DriverDTO;
 import ro.ananimarius.allride.allride.user.User;
-import ro.ananimarius.allride.allride.CRUDinterfaces.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -137,8 +138,44 @@ public class UserService {
             return false;
         } else {
             User user = users.get(0);
-            String test=user.getAuthToken();
             return user.getAuthToken().equals(authToken);
+        }
+    }
+
+    public List<DriverDTO> searchDrivers(double latitude, double longitude) {
+        List<User> users=new ArrayList<>();
+        for(double radiusKm=1;radiusKm<=100000;radiusKm++){
+            users = userRepository.findInRadius(latitude, longitude, radiusKm);
+            if(users.size()>=1){
+                break;
+            }
+        }
+        if (users.isEmpty()||users==null) {
+            return null;
+        } else {
+            List<DriverDTO> drivers = new ArrayList<>();
+            for (User user : users) {
+                DriverDTO driver = new DriverDTO(user.getFirstName(),user.getLastName(),user.getPhone(),user.getGoogleId(),user.getLatitude(),
+                        user.getLongitude(),user.getCar(),user.getCurrentRating());
+                drivers.add(driver);
+            }
+            return drivers;
+        }
+    }
+    public List<DriverDTO> displayAvailableDrivers() {
+        List<User> users=new ArrayList<>();
+        while(users.size()==0){
+            users = userRepository.findAvailableDrivers();
+        }
+        if (users.isEmpty()) {
+            return null;
+        } else {
+            List<DriverDTO> drivers = new ArrayList<>();
+            for (User user : users) {
+                DriverDTO driver = new DriverDTO(user.getLatitude(), user.getLongitude());
+                drivers.add(driver);
+            }
+            return drivers;
         }
     }
 }

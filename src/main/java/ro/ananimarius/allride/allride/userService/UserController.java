@@ -8,9 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.ananimarius.allride.allride.UserDAO.UserDAO;
+import ro.ananimarius.allride.allride.user.DriverDTO;
 import ro.ananimarius.allride.allride.user.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -123,19 +127,57 @@ public class UserController {
         return "Signout successful";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value="/selectDriver") //the traditional way of selecting from a list of drivers in the radius
-    public @ResponseBody ResponseEntity<String> selectDriver(@RequestParam String authToken,
-                             @RequestParam("idToken") String idToken,
-                             @RequestParam("latitude") double latitude,
-                             @RequestParam("longitude") double longitude){
-        boolean userAuthorized=users.authUser(idToken, authToken);
-        if(userAuthorized) {
-            return ResponseEntity.ok().body("Authorized!");
+        public class DriverSelectResult {
+        private List<DriverDTO> drivers;
+        private String message;
+        public DriverSelectResult(List<DriverDTO> drivers, String message) {this.drivers = drivers;this.message = message;}
+            public List<DriverDTO> getDrivers() {return drivers;}
+            public void setDrivers(List<DriverDTO> drivers) {this.drivers = drivers;}
+            public String getMessage() {return message;}
+            public void setMessage(String message) {this.message = message;}
         }
-        else{
-            return ResponseEntity.ok().body("Not authorized!");
+//    @RequestMapping(method = RequestMethod.POST, value="/selectDriver") //the traditional way of selecting from a list of drivers in the radius
+//    public @ResponseBody DriverSelectResult selectDriver(@RequestParam String authToken,
+//                                                 @RequestParam("idToken") String idToken,
+//                                                 @RequestParam("latitude") double latitude,
+//                                                 @RequestParam("longitude") double longitude){
+//        boolean userAuthorized=users.authUser(idToken, authToken);
+//        DriverSelectResult result=null;
+//        if(userAuthorized) {
+//            List<DriverDTO> drivers = users.searchDrivers(latitude, longitude);
+//
+//            if(drivers!=null){
+//                result= new DriverSelectResult(drivers,"Drivers found");
+//            }
+//            else {
+//                result = new DriverSelectResult(null, "Available drivers not found in the city");
+//            }
+//            return result;
+//        }
+//        else{
+//            result = new DriverSelectResult(null, "User not authorized!");
+//            return result;
+//        }
+//    }
+@RequestMapping(method = RequestMethod.POST, value="/selectDriver") //the traditional way of selecting from a list of drivers in the radius
+public @ResponseBody List<DriverDTO> selectDriver(@RequestParam String authToken,
+                                                     @RequestParam("idToken") String idToken,
+                                                     @RequestParam("latitude") double latitude,
+                                                     @RequestParam("longitude") double longitude){
+    boolean userAuthorized=users.authUser(idToken, authToken);
+    List<DriverDTO> drivers=new ArrayList<>();
+    if(userAuthorized) {
+         drivers = users.searchDrivers(latitude, longitude);
+
+        if(drivers!=null){
+            return drivers;
         }
+        return drivers;
     }
+    else{
+        return drivers;
+    }
+}
     @RequestMapping(method = RequestMethod.POST, value="/requestDriver") //with machine learning
     public void requestDriver(@RequestParam String authToken,
                              @RequestParam("idToken") String idToken,
@@ -144,6 +186,34 @@ public class UserController {
         boolean userAuthorized=users.authUser(idToken, authToken);
         if(userAuthorized) {
             //compete here
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/onMapDrivers") //show all the drivers on the map, later will modify to display only within radius
+    public @ResponseBody List<DriverDTO> onMapDrivers(@RequestParam String authToken,
+                                                         @RequestParam("idToken") String idToken/*,
+                                                         @RequestParam("latitude") double latitude,
+                                                         @RequestParam("longitude") double longitude*/){
+        boolean userAuthorized=users.authUser(idToken, authToken);
+        DriverSelectResult result=null;
+        List<DriverDTO> drivers=new ArrayList<>();
+        if(userAuthorized) {
+            drivers = users.displayAvailableDrivers(/*latitude, longitude*/);
+
+            if(drivers!=null){
+                //result= new DriverSelectResult(drivers,"Drivers found");
+                return drivers;
+            }
+            else {
+                return drivers;
+                //result = new DriverSelectResult(null, "Available drivers not found");
+            }
+            //return result;
+        }
+        else{
+            //result = new DriverSelectResult(null, "User not authorized!");
+            //return result;
+            return drivers;
         }
     }
 
